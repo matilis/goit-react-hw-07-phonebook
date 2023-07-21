@@ -1,35 +1,53 @@
-import { nanoid } from 'nanoid';
-const { createSlice } = require('@reduxjs/toolkit');
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchContacts, addContact, deleteContact } from 'redux/operations';
 
-const contactsInitialState =
-  JSON.parse(localStorage.getItem('PHONEBOOK')) || [];
+const handlePending = state => {
+  state.isLoading = true;
+};
+
+const handleRejected = (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+};
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: contactsInitialState,
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        const contactNames = state.map(contact => contact.name);
-        if (contactNames.includes(action.payload.name))
-          return alert(`${action.payload.name} is alredy in contacts`);
+  initialState: {
+    items: [],
+    isLoading: false,
+    error: null,
+  },
+  extraReducers: {
+    [fetchContacts.pending]: handlePending,
+    [fetchContacts.rejected]: handleRejected,
+    [addContact.pending]: handlePending,
+    [addContact.rejected]: handleRejected,
+    [deleteContact.pending]: handlePending,
+    [deleteContact.rejected]: handleRejected,
 
-        state.push(action.payload);
-        localStorage.setItem('PHONEBOOK', JSON.stringify(state));
-      },
-      prepare(name, number) {
-        return {
-          payload: { name, number, id: nanoid() },
-        };
-      },
+    [fetchContacts.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items = action.payload;
     },
-    deleteContact(state, action) {
-      const index = state.findIndex(contact => contact.id === action.payload);
-      state.splice(index, 1);
-      localStorage.setItem('PHONEBOOK', JSON.stringify(state));
+
+    [addContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items.push(action.payload);
+    },
+
+    [deleteContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      const index = state.items.findIndex(
+        task => task.id === action.payload.id
+      );
+      state.items.splice(index, 1);
     },
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
+export const { fetchingInProgress, fetchingSuccess, fetchingError } =
+  contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
