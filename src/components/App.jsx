@@ -1,5 +1,6 @@
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
+import { Loader, Error } from './Spinner/Spinner';
 import { ContactList } from './ContactList/ContactList';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsLoading, selectError } from 'redux/selectors';
@@ -21,8 +22,8 @@ export const App = () => {
       <ContactForm />
       <h2>Contacts</h2>
       <Filter />
-      {isLoading ? <p>Loading contacts...</p> : <ContactList />}
-      {error && <p>Data loading error</p>}
+      {isLoading ? <Loader /> : <ContactList />}
+      {error && <Error />}
     </div>
   );
 };
