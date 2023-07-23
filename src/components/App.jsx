@@ -18,11 +18,11 @@ export const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      {isLoading && !error && <p>Request in progress</p>}
       <ContactForm />
       <h2>Contacts</h2>
-      {/* <Filter /> */}
-      {/* <ContactList /> */}
+      <Filter />
+      {isLoading ? <p>Loading contacts...</p> : <ContactList />}
+      {error && <p>Data loading error</p>}
     </div>
   );
 };

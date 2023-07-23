@@ -1,21 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact } from 'redux/operations';
+import { selectVisibleContacts } from 'redux/selectors';
 import css from './ContactList.module.css';
 
-const getVisibleContacts = (contacts, filteredContacts) => {
-  if (filteredContacts === '') {
-    return contacts;
-  } else {
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filteredContacts.filter)
-    );
-  }
-};
-
 export const ContactList = () => {
-  const contacts = useSelector(state => state.contacts);
-  const filteredContacts = useSelector(state => state.filters);
-  const visibleContacts = getVisibleContacts(contacts, filteredContacts);
+  const contacts = useSelector(selectVisibleContacts);
 
   const dispatch = useDispatch();
 
@@ -23,10 +12,10 @@ export const ContactList = () => {
 
   return (
     <ul className={css.contacts}>
-      {visibleContacts.map(contact => (
+      {contacts.map(contact => (
         <li key={contact.id} className={css.contacts__item}>
           <p className={css.contacts__name}>{contact.name}</p>
-          <p className={css.contacts__number}>{contact.number}</p>
+          <p className={css.contacts__number}>{contact.phone}</p>
           <button
             type="button"
             value={contact.id}
