@@ -10,6 +10,8 @@ const handleRejected = (state, action) => {
   state.error = action.payload;
 };
 
+// opis w selectors.js tu ponizej wpada wtedy np. items: []
+
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
